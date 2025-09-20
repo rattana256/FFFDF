@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พอร์ทนักศึกษา</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .sidebar {
+            width: 16rem;
+        }
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        /* Custom alert box styling */
+        .custom-alert {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            padding: 0.75rem 1.5rem;
+            background-color: #10b981;
+            color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            animation: fadeInOut 3s forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+
+        /* SVG icon styling */
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen antialiased">
+
+    <!-- Sidebar -->
+    <nav class="sidebar bg-white p-4 shadow-lg md:flex md:flex-col md:h-full md:sticky md:top-0">
+        <div class="flex items-center justify-between md:justify-center">
+            <h1 class="text-2xl font-bold text-indigo-600 mb-6">พอร์ทนักศึกษา</h1>
+            <!-- Mobile Menu Toggle (hidden on desktop) -->
+            <button id="menu-toggle" class="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+        <ul id="menu-list" class="hidden md:block space-y-2 mt-4">
+            <li>
+                <a href="#profile" class="nav-link flex items-center p-3 rounded-xl hover:bg-indigo-50 transition-colors duration-200">
+                    <svg class="icon mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span class="font-medium">โปรไฟล์</span>
+                </a>
+            </li>
+            <li>
+                <a href="#grades" class="nav-link flex items-center p-3 rounded-xl hover:bg-indigo-50 transition-colors duration-200">
+                    <svg class="icon mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M12 12h.01"></path></svg>
+                    <span class="font-medium">เกรด</span>
+                </a>
+            </li>
+            <li>
+                <a href="#payments" class="nav-link flex items-center p-3 rounded-xl hover:bg-indigo-50 transition-colors duration-200">
+                    <svg class="icon mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M7 12v-2a2 2 0 012-2h6a2 2 0 012 2v2M3 12h18M7 12a4 4 0 014 4h2a4 4 0 014-4"></path></svg>
+                    <span class="font-medium">การชำระเงิน</span>
+                </a>
+            </li>
+            <li>
+                <a href="#notifications" class="nav-link flex items-center p-3 rounded-xl hover:bg-indigo-50 transition-colors duration-200">
+                    <svg class="icon mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.366 6 8.32 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="font-medium">การแจ้งเตือน</span>
+                </a>
+            </li>
+            <li>
+                <a href="#settings" class="nav-link flex items-center p-3 rounded-xl hover:bg-indigo-50 transition-colors duration-200">
+                    <svg class="icon mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.608 3.292 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span class="font-medium">ตั้งค่า</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 md:p-12 overflow-y-auto">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-8">ภาพรวมพอร์ทนักศึกษา</h1>
+
+        <!-- Profile Section -->
+        <section id="profile" class="content-section active">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">ข้อมูลส่วนตัว</h2>
+                <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8">
+                    <div class="flex-shrink-0">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrSFwcuTFtufclgk0itInsus3o9sPuXCL4VA&s" alt="Profile Picture" class="profile-pic rounded-full shadow-md border-4 border-indigo-100">
+                        <button class="mt-4 w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-full font-semibold hover:bg-gray-300 transition-colors duration-200">
+                            อัปโหลดรูปภาพ
+                        </button>
+                    </div>
+                    <div class="flex-1 space-y-4 w-full">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">ชื่อนักศึกษา</label>
+                            <input type="text" value="rattanapat nantasaen" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">รหัสนักศึกษา</label>
+                            <input type="text" value="6222445215" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">อีเมล</label>
+                            <input type="email" value="rattanapat7@email.com" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">โทรศัพท์</label>
+                            <input type="text" value="012-345-6789" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">ที่อยู่</label>
+                            <textarea rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3">13สีหบุรานุกิจ มีนบุรี, กรุงเทพฯ 10110</textarea>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="block text-sm font-medium text-gray-700">การแจ้งเตือนทาง SMS/อีเมล</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input id="notification-toggle" type="checkbox" value="" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex justify-end mt-6">
+                            <button id="update-profile-btn" class="bg-indigo-600 text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-indigo-700 transition-colors duration-200">
+                                อัปเดตโปรไฟล์
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Grades Section (hidden by default) -->
+        <section id="grades" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">บันทึกเกรด</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วิชา</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เกรด</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">หน่วยกิต</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปีการศึกษา</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">คณิตศาสตร์ขั้นสูง</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-green-600 font-bold">A</td>
+                                <td class="px-6 py-4 whitespace-nowrap">3</td>
+                                <td class="px-6 py-4 whitespace-nowrap">2567</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">ฟิสิกส์เบื้องต้น</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-green-600 font-bold">B+</td>
+                                <td class="px-6 py-4 whitespace-nowrap">3</td>
+                                <td class="px-6 py-4 whitespace-nowrap">2567</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">วิทยาการคอมพิวเตอร์เบื้องต้น</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-green-600 font-bold">A-</td>
+                                <td class="px-6 py-4 whitespace-nowrap">4</td>
+                                <td class="px-6 py-4 whitespace-nowrap">2567</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payments Section (hidden by default) -->
+        <section id="payments" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">ประวัติการชำระเงิน</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รายการ</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">จำนวนเงิน</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">ค่าเล่าเรียนภาคเรียนที่ 1</td>
+                                <td class="px-6 py-4 whitespace-nowrap">2,000,000 บาท</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">ชำระแล้ว</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">10/05/2567</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">ค่ากิจกรรมนักศึกษา</td>
+                                <td class="px-6 py-4 whitespace-nowrap">20 บาท</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">ชำระแล้ว</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">01/06/2567</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notifications Section (hidden by default) -->
+        <section id="notifications" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">การแจ้งเตือน</h2>
+                <ul class="space-y-4">
+                    <li class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <p class="font-semibold text-gray-900">การแจ้งเตือนใหม่: กำหนดส่งการบ้านวิชาฟิสิกส์</p>
+                        <p class="text-sm text-gray-600 mt-1">การบ้านบทที่ 5 มีกำหนดส่งภายในวันที่ 25 ตุลาคม 2567</p>
+                    </li>
+                    <li class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <p class="font-semibold text-gray-900">โปรดตรวจสอบเกรดวิชาวิทยาการคอมพิวเตอร์</p>
+                        <p class="text-sm text-gray-600 mt-1">เกรดวิชาวิทยาการคอมพิวเตอร์เบื้องต้นได้รับการอัปเดตแล้ว</p>
+                    </li>
+                    <li class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <p class="font-semibold text-gray-900">การแจ้งเตือนทั่วไป: การปิดทำการของมหาวิทยาลัย</p>
+                        <p class="text-sm text-gray-600 mt-1">มหาวิทยาลัยจะปิดทำการเนื่องในวันหยุดนักขัตฤกษ์ในวันที่ 11 พฤศจิกายน</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Settings Section (hidden by default) -->
+        <section id="settings" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">ตั้งค่า</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">การตั้งค่าบัญชี</h3>
+                        <p class="text-gray-600 mt-2">
+                            จัดการรหัสผ่าน, ข้อมูลติดต่อ, และความปลอดภัยของบัญชีของคุณ
+                        </p>
+                        <button class="mt-4 bg-gray-200 text-gray-800 py-2 px-4 rounded-full font-semibold hover:bg-gray-300 transition-colors duration-200">
+                            เปลี่ยนรหัสผ่าน
+                        </button>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">ความเป็นส่วนตัว</h3>
+                        <p class="text-gray-600 mt-2">
+                            ตั้งค่าการมองเห็นข้อมูลส่วนตัวของคุณ
+                        </p>
+                        <button class="mt-4 bg-gray-200 text-gray-800 py-2 px-4 rounded-full font-semibold hover:bg-gray-300 transition-colors duration-200">
+                            จัดการความเป็นส่วนตัว
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Custom Alert Box -->
+    <div id="custom-alert-box" class="custom-alert hidden">
+        <p id="alert-message"></p>
+    </div>
+
+    <script>
+        const navLinks = document.querySelectorAll('.nav-link');
+        const contentSections = document.querySelectorAll('.content-section');
+        const updateProfileBtn = document.getElementById('update-profile-btn');
+        const customAlertBox = document.getElementById('custom-alert-box');
+        const alertMessage = document.getElementById('alert-message');
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuList = document.getElementById('menu-list');
+
+        // Function to show custom alert
+        function showAlert(message) {
+            alertMessage.textContent = message;
+            customAlertBox.classList.remove('hidden');
+            setTimeout(() => {
+                customAlertBox.classList.add('hidden');
+            }, 3000); // Hide after 3 seconds
+        }
+
+        // Event listener for navigation links
+        navLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+
+                // Hide all sections
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // Show the target section
+                document.getElementById(targetId).classList.add('active');
+
+                // Close mobile menu
+                if (window.innerWidth < 768) {
+                    menuList.classList.add('hidden');
+                }
+            });
+        });
+
+        // Event listener for update profile button
+        updateProfileBtn.addEventListener('click', () => {
+            showAlert('โปรไฟล์ได้รับการอัปเดตเรียบร้อยแล้ว!');
+        });
+
+        // Event listener for mobile menu toggle
+        menuToggle.addEventListener('click', () => {
+            menuList.classList.toggle('hidden');
+        });
+
+        // Initialize active section on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if there's a hash in the URL to determine the active section
+            const initialHash = window.location.hash;
+            let targetSection = document.getElementById('profile');
+            if (initialHash) {
+                const sectionFromHash = document.getElementById(initialHash.substring(1));
+                if (sectionFromHash) {
+                    targetSection = sectionFromHash;
+                }
+            }
+            targetSection.classList.add('active');
+
+            // Set initial active nav link
+            const initialLink = document.querySelector(`.nav-link[href="${initialHash || '#profile'}"]`);
+            if (initialLink) {
+                // You can add a visual active state if you want
+            }
+        });
+
+    </script>
+</body>
+</html>
